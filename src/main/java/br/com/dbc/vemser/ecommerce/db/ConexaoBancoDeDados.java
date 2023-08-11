@@ -1,18 +1,30 @@
 package br.com.dbc.vemser.ecommerce.db;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Component
+@RequiredArgsConstructor
 public class ConexaoBancoDeDados {
-    // CONEXÃO COM O DATABASE DA DBC
-    private static final String SERVER = "vemser-hml.dbccompany.com.br";
-    private static final String PORT = "25000"; // Porta TCP padrão do Oracle
-    private static final String DATABASE = "xe";
+    @Value("${db.server}")
+    private static String SERVER;
 
-    // Configuração dos parâmetros de autenticação
-    private static final String USER = "EQUIPE_1";
-    private static final String PASS = "oracle";
+    @Value("${db.port}")
+    private static String PORT;
+
+    @Value("${db.database}")
+    private static String DATABASE;
+
+    @Value("${db.username}")
+    private static String USER;
+
+    @Value("${db.password}")
+    private static String PASS;
     private static final String SCHEMA = "EQUIPE_1";
 
     public static Connection getConnection() throws SQLException {
