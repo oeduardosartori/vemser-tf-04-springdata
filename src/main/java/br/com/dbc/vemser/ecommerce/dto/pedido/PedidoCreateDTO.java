@@ -15,5 +15,4 @@ public class PedidoCreateDTO {
     @Schema(description = "O ID do produto associado ao pedido", required = true)
     private Integer idProduto;
 
-
 }
