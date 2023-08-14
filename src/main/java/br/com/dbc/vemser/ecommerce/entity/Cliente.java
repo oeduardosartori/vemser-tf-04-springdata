@@ -33,15 +33,16 @@ public class Cliente {
     @Column(name = "CPF")
     private String cpf;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Endereco> enderecos = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Pedido>pedidos;
 
     public void addEndereco(Endereco endereco) {
         enderecos.add(endereco);
     }
-
 
 }
