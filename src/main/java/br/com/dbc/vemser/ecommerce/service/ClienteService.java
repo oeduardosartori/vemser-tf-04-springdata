@@ -25,7 +25,7 @@ public class ClienteService {
     private final ObjectMapper objectMapper;
 
     public List<ClienteDTO> list() throws BancoDeDadosException {
-        List<Cliente> clientes = clienteRepository.list();
+        List<Cliente> clientes = clienteRepository.findAll();
         List<ClienteDTO> clienteDTOS = new ArrayList<>();
 
         for (Cliente cliente : clientes) {
@@ -37,7 +37,7 @@ public class ClienteService {
 
     public ClienteDTO getClienteById(Integer idCliente) throws Exception {
 
-        Cliente cliente = clienteRepository.getClienteById(idCliente);
+        Cliente cliente = clienteRepository.findById(idCliente).get();
 
         if (cliente == null) throw new RegraDeNegocioException("Cliente não cadastrado!");
 
@@ -46,7 +46,7 @@ public class ClienteService {
 
     public ClienteDTO create(ClienteCreateDTO clienteCreateDTO) throws Exception {
         Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.create(entity);
+        Cliente cliente = clienteRepository.save(entity);
         ClienteDTO clienteDTO = converterByClienteDTO(cliente);
         notificacaoByEmail.notificarByEmailCliente(clienteDTO, "criado");
 
@@ -58,7 +58,7 @@ public class ClienteService {
         getClienteById(idCliente);
 
         Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.update(idCliente, entity);
+        Cliente cliente = clienteRepository.save(entity);
         ClienteDTO clienteDTO = converterByClienteDTO(cliente);
         notificacaoByEmail.notificarByEmailCliente(clienteDTO, "atualizado");
 
@@ -69,7 +69,8 @@ public class ClienteService {
         ClienteDTO clienteDTO = getClienteById(idCliente);
         notificacaoByEmail.notificarByEmailCliente(clienteDTO, "deletado");
 
-        clienteRepository.delete(idCliente);
+
+        clienteRepository.delete(converterByCliente(clienteDTO));
     }
 
     public ClienteDTO converterByClienteDTO(Cliente cliente) {

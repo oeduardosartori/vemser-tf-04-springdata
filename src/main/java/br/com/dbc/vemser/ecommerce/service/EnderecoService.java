@@ -25,7 +25,7 @@ public class EnderecoService {
     private final ObjectMapper objectMapper;
 
     public List<EnderecoDTO> listarEnderecos() throws Exception {
-        List<Endereco> enderecos = enderecoRepository.listarEnderecos();
+        List<Endereco> enderecos = enderecoRepository.findAll();
         List<EnderecoDTO> enderecoDTOS = new ArrayList<>();
 
         for (Endereco endereco : enderecos) {
@@ -36,7 +36,7 @@ public class EnderecoService {
     }
 
     public EnderecoDTO getEnderecoById(Integer idEndereco) throws Exception {
-        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
+        Endereco endereco = enderecoRepository.getById(idEndereco);
         if(endereco == null) {
             throw new RegraDeNegocioException("Endereço não encontrado");
         }
@@ -47,7 +47,9 @@ public class EnderecoService {
         if(clienteDTO == null) {
             throw new RegraDeNegocioException("Cliente não encontrado");
         }
-        List<EnderecoDTO> enderecoDTOList = enderecoRepository.listarEnderecoByIdCliente(idCliente)
+
+        enderecoRepository.findAllById(idCliente)
+        List<EnderecoDTO> enderecoDTOList =  enderecoRepository.findAllById(idCliente)
                 .stream().map(this::converterByEnderecoDTO).collect(Collectors.toList());
 
         return enderecoDTOList;
