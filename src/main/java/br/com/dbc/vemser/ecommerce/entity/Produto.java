@@ -1,4 +1,3 @@
-
 package br.com.dbc.vemser.ecommerce.entity;
 
 import lombok.AllArgsConstructor;
@@ -68,5 +67,3 @@ public class Produto {
 //            inverseJoinColumns = @JoinColumn(name = "id_produto")
 //    )
 //    private Set<Produto> produtos = new HashSet<>();
-
-//}

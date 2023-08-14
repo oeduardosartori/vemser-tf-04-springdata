@@ -46,6 +46,3 @@ public class Endereco {
     @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID_CLIENTE")
     private Cliente cliente;
 }
-
-
-
