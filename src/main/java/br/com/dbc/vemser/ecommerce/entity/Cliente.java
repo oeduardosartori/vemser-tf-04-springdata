@@ -1,18 +1,47 @@
-//package br.com.dbc.vemser.ecommerce.entity;
-//
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//public class Cliente {
-//
-//    private Integer idCliente;
-//    private String nome;
-//    private String telefone;
-//    private String email;
-//    private String cpf;
-//
-//}
+package br.com.dbc.vemser.ecommerce.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "CLIENTE")
+public class Cliente {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CLIENTE_SEQ")
+    @SequenceGenerator(name = "CLIENTE_SEQ", sequenceName = "SEQ_CLIENTE", allocationSize = 1)
+    @Column(name = "ID_CLIENTE")
+    private Integer idCliente;
+
+    @Column(name = "NOME")
+    private String nome;
+
+    @Column(name = "TELEFONE")
+    private String telefone;
+
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Column(name = "CPF")
+    private String cpf;
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Endereco> enderecos = new HashSet<>();
+
+
+    public void addEndereco(Endereco endereco) {
+        enderecos.add(endereco);
+    }
+
+
+}

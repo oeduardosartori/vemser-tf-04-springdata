@@ -1,23 +1,48 @@
-//package br.com.dbc.vemser.ecommerce.entity;
-//
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//public class Endereco {
-//
-//    private Integer idEndereco;
-//    private Integer idCliente;
-//    private String logradouro;
-//    private Integer numero;
-//    private String complemento;
-//    private String cep;
-//    private String bairro;
-//    private String cidade;
-//    private String estado;
-//}
-//
-//
+package br.com.dbc.vemser.ecommerce.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity(name = "ENDERECO")
+public class Endereco {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ENDERECO_SEQ")
+    @SequenceGenerator(name = "ENDERECO_SEQ", sequenceName = "SEQ_ENDERECO", allocationSize = 1)
+    @Column(name = "ID_ENDERECO")
+    private Integer idEndereco;
+
+
+    //    private Integer idCliente;
+
+    @Column(name = "LOGRADOURO")
+    private String logradouro;
+
+    @Column(name = "NUMERO")
+    private Integer numero;
+
+    @Column(name = "COMPLEMENTO")
+    private String complemento;
+
+    @Column(name = "CEP")
+    private String cep;
+
+    @Column(name = "BAIRRO")
+    private String bairro;
+
+    @Column(name = "CIDADE")
+    private String cidade;
+
+    @Column(name = "ESTADO")
+    private String estado;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID_CLIENTE")
+    private Cliente cliente;
+}
