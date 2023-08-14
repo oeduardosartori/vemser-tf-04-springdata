@@ -21,6 +21,7 @@ public class ConverterProdutoParaDTOutil {
     public ProdutoDTO converteProdutoParaDTO(Produto produtoUpdate) {
         ProdutoDTO produtoUpdateDTO = new ProdutoDTO();
 
+
         produtoUpdateDTO.setIdProduto(produtoUpdate.getIdProduto());
         produtoUpdateDTO.setCor(produtoUpdate.getCor());
         produtoUpdateDTO.setModelo(produtoUpdate.getModelo());
