@@ -31,7 +31,6 @@ public class Produto {
 
 
     @Column(name = "SETOR")
-    @Enumerated(EnumType.STRING)
     private String setor;
 
 
@@ -43,27 +42,3 @@ public class Produto {
 //    private Set<Pedido> pedidos = new HashSet<>();
 
 }
-
-
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Entity(name = "PEDIDO")
-//public class Pedido {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PEDIDO_SEQ")
-//    @SequenceGenerator(name = "PEDIDO_SEQ", sequenceName = "SEQ_PEDIDO", allocationSize = 1)
-//    @Column(name = "ID_PEDIDO")
-//    private Integer idPedido;
-//    private Integer idCliente;
-//    private Double valor;
-//    private String statusPedido;
-//
-//
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(name = "Pedido_X_Produto",
-//            joinColumns = @JoinColumn(name = "id_pedido"),
-//            inverseJoinColumns = @JoinColumn(name = "id_produto")
-//    )
-//    private Set<Produto> produtos = new HashSet<>();
