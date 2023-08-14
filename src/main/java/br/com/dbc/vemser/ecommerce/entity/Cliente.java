@@ -1,3 +1,4 @@
+
 package br.com.dbc.vemser.ecommerce.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,3 +46,4 @@ public class Cliente {
 
 
 }
+
