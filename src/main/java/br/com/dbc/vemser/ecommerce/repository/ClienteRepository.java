@@ -11,4 +11,8 @@ public interface ClienteRepository extends JpaRepository<ClienteEntity, Integer>
     @Query("Select c From CLIENTE c where (:idCliente is null or c.idCliente = :idCliente)")
     List<ClienteEntity> buscarTodosOptionalId(Integer idCliente);
 
+
+//    @Query("Select c From CLIENTE c where (:idCliente is null or c.idCliente = :idCliente)")
+//    List<ClienteEntity> buscarTodosOptionalId(Integer idCliente);
+
 }

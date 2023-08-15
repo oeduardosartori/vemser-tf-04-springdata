@@ -1,19 +1,22 @@
 package br.com.dbc.vemser.ecommerce.service;
 
 
-
-
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
+
+import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoEntityDTO;
+
 import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
+
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import br.com.dbc.vemser.ecommerce.utils.ConverterProdutoParaDTOutil;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,9 +29,14 @@ public class ProdutoService {
 
     public List<ProdutoDTO> listar(Integer idProduto) throws Exception {
 
-        return  produtoRepository.buscarTodosOptionalId(idProduto).stream()
-                .map(converterProdutoParaDTOutil::converteProdutoParaDTO)
-                .collect(Collectors.toList());
+        return produtoRepository.buscarTodosOptionalId(idProduto).stream()
+                .map(converterProdutoParaDTOutil::converteProdutoParaDTO).toList();
+    }
+
+    public Page<ProdutoEntityDTO> listarPaginado(Pageable pageable) throws Exception {
+
+        return produtoRepository.buscarTodosProdutoPaginacao(pageable);
+
     }
 
     public ProdutoDTO buscarProduto(Integer idProduto) throws Exception {
@@ -73,4 +81,6 @@ public class ProdutoService {
         produtoRepository.delete(buscarProdutoEntity);
 
     }
+
+
 }

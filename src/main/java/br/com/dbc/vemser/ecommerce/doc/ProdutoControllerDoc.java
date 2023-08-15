@@ -25,7 +25,9 @@ public interface ProdutoControllerDoc {
             }
     )
     @GetMapping
-    ResponseEntity<List<ProdutoDTO>> listarProdutos(@RequestParam(required = false) Integer idProduto) throws Exception;
+    public ResponseEntity<List<ProdutoDTO>> listarProdutos(
+            @RequestParam(required = false) Integer idProduto) throws Exception;
+
 
     @Operation(summary = "Listar produto por ID", description = "Lista produto por ID no banco")
     @ApiResponses(
