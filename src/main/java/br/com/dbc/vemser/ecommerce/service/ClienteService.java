@@ -18,20 +18,24 @@ public class ClienteService {
     private final ObjectMapper objectMapper;
     private final ClienteRepository clienteRepository;
 
-    public ClienteDTO save(ClienteCreateDTO clienteCreateDTO){
+
+    public ClienteDTO save(ClienteCreateDTO clienteCreateDTO) {
         return convertToDto(clienteRepository.save(convertToEntity(clienteCreateDTO)));
     }
 
-    public List<ClienteDTO> findAll(){
-        return clienteRepository.findAll().stream().map(clienteEntity -> convertToDto(clienteEntity)).collect(Collectors.toList());
+    public List<ClienteDTO> findAll(Integer idCliente) {
+        return clienteRepository.buscarTodosOptionalId(idCliente)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public ClienteDTO getByid(Integer idCliente)throws RegraDeNegocioException{
+    public ClienteDTO getByid(Integer idCliente) throws RegraDeNegocioException {
         ClienteDTO clienteDTO = convertToDto(findById(idCliente));
         return clienteDTO;
     }
 
-    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws RegraDeNegocioException{
+    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws RegraDeNegocioException {
         ClienteEntity findedClient = findById(idCliente);
         findedClient.setCpf(clienteCreateDTO.getCpf());
         findedClient.setNome(clienteCreateDTO.getNome());
@@ -44,19 +48,20 @@ public class ClienteService {
     public void delete(Integer idCliente) {
         ClienteEntity clienteEntity = clienteRepository.getById(idCliente);
         clienteRepository.delete(clienteEntity);
-    }
 
+    }
 
 
     //metodos auxiliares
-    public ClienteEntity findById(Integer idcliente) throws RegraDeNegocioException{
+    public ClienteEntity findById(Integer idcliente) throws RegraDeNegocioException {
         return clienteRepository.findById(idcliente).orElseThrow(() -> new RegraDeNegocioException("Cliente não encontrado"));
     }
 
-    public ClienteDTO convertToDto(ClienteEntity clienteEntity){
-        return objectMapper.convertValue(clienteEntity,ClienteDTO.class);
+    public ClienteDTO convertToDto(ClienteEntity clienteEntity) {
+        return objectMapper.convertValue(clienteEntity, ClienteDTO.class);
     }
-    public ClienteEntity convertToEntity(ClienteCreateDTO clienteCreateDTO){
-        return objectMapper.convertValue(clienteCreateDTO,ClienteEntity.class);
+
+    public ClienteEntity convertToEntity(ClienteCreateDTO clienteCreateDTO) {
+        return objectMapper.convertValue(clienteCreateDTO, ClienteEntity.class);
     }
 }

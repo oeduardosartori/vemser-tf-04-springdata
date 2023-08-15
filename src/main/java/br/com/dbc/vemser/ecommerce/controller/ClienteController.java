@@ -22,8 +22,8 @@ public class ClienteController implements ClienteControllerDoc {
     private final ClienteService clienteService;
 
     @Override
-    public ResponseEntity<List<ClienteDTO>> findAll(){
-        return new ResponseEntity<List<ClienteDTO>>(clienteService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<ClienteDTO>> findAll(@RequestParam(required = false) Integer idCliente){
+        return new ResponseEntity<List<ClienteDTO>>(clienteService.findAll(idCliente), HttpStatus.OK);
     }
 
     @Override

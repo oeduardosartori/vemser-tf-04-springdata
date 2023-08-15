@@ -2,14 +2,16 @@ package br.com.dbc.vemser.ecommerce.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "CLIENTE")
@@ -39,10 +41,11 @@ public class ClienteEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PedidoEntity> pedidoEntities;
+    private Set<PedidoEntity> pedidoEntities = new HashSet<>();
 
     public void addEndereco(EnderecoEntity enderecoEntity) {
         enderecoEntities.add(enderecoEntity);
     }
+
 
 }

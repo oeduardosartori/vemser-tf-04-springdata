@@ -24,7 +24,7 @@ public interface ClienteControllerDoc {
             }
     )
     @GetMapping
-    ResponseEntity<List<ClienteDTO>> findAll() throws Exception;
+    ResponseEntity<List<ClienteDTO>> findAll(@RequestParam(required = false) Integer idCliente) throws Exception;
 
     @Operation(summary = "Listar cliente por ID", description = "Lista cliente pelo ID no banco")
     @ApiResponses(
@@ -62,7 +62,7 @@ public interface ClienteControllerDoc {
     )
     @PutMapping("/{idCliente}")
     ResponseEntity<ClienteDTO> update(@PathVariable Integer idCliente,
-                                             @RequestBody ClienteCreateDTO cliente) throws RegraDeNegocioException;
+                                      @RequestBody ClienteCreateDTO cliente) throws RegraDeNegocioException;
 
     @Operation(summary = "Deletar o cliente pelo ID", description = "Deleta o cliente informado pelo ID no banco")
     @ApiResponses(
