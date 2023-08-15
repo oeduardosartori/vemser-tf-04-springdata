@@ -23,7 +23,7 @@ public class PedidoEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
-    private Cliente cliente;
+    private ClienteEntity cliente;
 
     @Column(name = "valor")
     private Double valor;
