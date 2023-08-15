@@ -4,7 +4,8 @@ import br.com.dbc.vemser.ecommerce.doc.PedidoControllerDoc;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoDTO;
 import br.com.dbc.vemser.ecommerce.service.PedidoService;
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +15,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@Data
 @Validated
-@AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/pedido")
 public class PedidoController implements PedidoControllerDoc {
 
