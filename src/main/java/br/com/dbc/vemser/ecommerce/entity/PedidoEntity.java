@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "PEDIDO")
-public class Pedido {
+public class PedidoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PEDIDO_SEQ")
@@ -23,7 +23,7 @@ public class Pedido {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
-    private Cliente cliente;
+    private ClienteEntity cliente;
 
     @Column(name = "valor")
     private Double valor;
