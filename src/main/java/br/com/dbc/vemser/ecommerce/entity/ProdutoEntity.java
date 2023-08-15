@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "PRODUTO")
-public class Produto {
+public class ProdutoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUTO_SEQ")
@@ -43,7 +43,7 @@ public class Produto {
     private Double valor;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "produtos", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "produtoEntities", cascade = CascadeType.ALL)
     private List<PedidoEntity> pedidos = new ArrayList<>();
 
     public void addPedido(PedidoEntity pedidoEntity) {

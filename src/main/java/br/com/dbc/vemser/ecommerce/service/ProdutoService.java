@@ -5,7 +5,7 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
-import br.com.dbc.vemser.ecommerce.entity.Produto;
+import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import br.com.dbc.vemser.ecommerce.utils.ConverterProdutoParaDTOutil;
@@ -33,44 +33,44 @@ public class ProdutoService {
 
     public ProdutoDTO buscarProduto(Integer idProduto) throws Exception {
 
-        Produto produto = produtoRepository.findByIdProduto(idProduto);
+        ProdutoEntity produtoEntity = produtoRepository.findByIdProduto(idProduto);
 
-        if (produto == null) {
+        if (produtoEntity == null) {
             throw new RegraDeNegocioException("Produto não cadastrado.");
         }
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produto);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntity);
 
     }
 
 
     public ProdutoDTO salvar(ProdutoCreateDTO produtoCreateDTO) throws Exception {
 
-        Produto produto = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
+        ProdutoEntity produtoEntity = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
 
-        Produto produtoBuscado = produtoRepository.save(produto);
+        ProdutoEntity produtoEntityBuscado = produtoRepository.save(produtoEntity);
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoBuscado);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityBuscado);
     }
 
     public ProdutoDTO atualizar(Integer idProduto, ProdutoCreateDTO produtoCreateDTO) throws Exception {
 
-        Produto buscarProduto = produtoRepository.findByIdProduto(idProduto);
-        if (buscarProduto == null) {
+        ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
+        if (buscarProdutoEntity == null) {
             throw new RegraDeNegocioException("Produto não cadastrado!");
         }
-        Produto produto = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
+        ProdutoEntity produtoEntity = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
 
-        Produto produtoAtualizado = produtoRepository.save(produto);
+        ProdutoEntity produtoEntityAtualizado = produtoRepository.save(produtoEntity);
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoAtualizado);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityAtualizado);
     }
 
     public void deletar(Integer idProduto) throws Exception {
 
-        Produto buscarProduto = produtoRepository.findByIdProduto(idProduto);
+        ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
 
-        produtoRepository.delete(buscarProduto);
+        produtoRepository.delete(buscarProdutoEntity);
 
     }
 }
