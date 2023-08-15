@@ -40,20 +40,20 @@ public class PedidoEntity {
             joinColumns = @JoinColumn(name = "id_pedido"),
             inverseJoinColumns = @JoinColumn(name = "id_produto")
     )
-    private List<Produto> produtos = new ArrayList<>();
+    private List<ProdutoEntity> produtoEntities = new ArrayList<>();
 
-    public void addProduto(Produto produto) {
-        produto.addPedido(this);
-        produtos.add(produto);
-        this.valor += produto.getValor();
+    public void addProduto(ProdutoEntity produtoEntity) {
+        produtoEntity.addPedido(this);
+        produtoEntities.add(produtoEntity);
+        this.valor += produtoEntity.getValor();
     }
 
-    public void removerProduto(Produto produto) {
-        Double valorProduto = produto.getValor();
-        boolean remove = produtos.remove(produto);
+    public void removerProduto(ProdutoEntity produtoEntity) {
+        Double valorProduto = produtoEntity.getValor();
+        boolean remove = produtoEntities.remove(produtoEntity);
         if (remove) {
             this.valor -= valorProduto;
-            produto.removePedido(this);
+            produtoEntity.removePedido(this);
         }
     }
 
