@@ -18,59 +18,7 @@ public class ClienteService {
     private final ObjectMapper objectMapper;
     private final ClienteRepository clienteRepository;
 
-<<<<<<< HEAD
-    private final NotificacaoByEmail notificacaoByEmail;
 
-    private final ObjectMapper objectMapper;
-
-    public List<ClienteDTO> list() throws BancoDeDadosException {
-        List<Cliente> clientes = clienteRepository.findAll();
-        List<ClienteDTO> clienteDTOS = new ArrayList<>();
-
-        for (Cliente cliente : clientes) {
-            clienteDTOS.add(converterByClienteDTO(cliente));
-        }
-
-        return clienteDTOS;
-    }
-
-    public ClienteDTO getClienteById(Integer idCliente) throws Exception {
-
-        Cliente cliente = clienteRepository.findById(idCliente).get();
-
-        if (cliente == null) throw new RegraDeNegocioException("Cliente não cadastrado!");
-
-        return converterByClienteDTO(cliente);
-    }
-
-    public ClienteDTO create(ClienteCreateDTO clienteCreateDTO) throws Exception {
-        Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.save(entity);
-        ClienteDTO clienteDTO = converterByClienteDTO(cliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "criado");
-
-        return clienteDTO;
-    }
-
-    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
-
-        getClienteById(idCliente);
-
-        Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.save(entity);
-        ClienteDTO clienteDTO = converterByClienteDTO(cliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "atualizado");
-
-        return clienteDTO;
-    }
-
-    public void delete(Integer idCliente) throws Exception {
-        ClienteDTO clienteDTO = getClienteById(idCliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "deletado");
-
-
-        clienteRepository.delete(converterByCliente(clienteDTO));
-=======
     public ClienteDTO save(ClienteCreateDTO clienteCreateDTO){
         return convertToDto(clienteRepository.save(convertToEntity(clienteCreateDTO)));
     }
@@ -97,7 +45,7 @@ public class ClienteService {
     public void delete(Integer idCliente) {
         ClienteEntity clienteEntity = clienteRepository.getById(idCliente);
         clienteRepository.delete(clienteEntity);
->>>>>>> developer
+
     }
 
 

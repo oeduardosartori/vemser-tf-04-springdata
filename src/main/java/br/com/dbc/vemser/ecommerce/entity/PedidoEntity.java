@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -21,7 +22,7 @@ public class PedidoEntity {
     private Integer idPedido;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente")
     private ClienteEntity cliente;
 
@@ -33,10 +34,12 @@ public class PedidoEntity {
 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "Pedido_X_Produto",
-           joinColumns = @JoinColumn(name = "id_pedido"),
-            inverseJoinColumns = @JoinColumn(name = "id_produto")
-    )
-    private Set<Produto> produtos;
+    @JoinTable(name = "Pedido_X_Produto")
+    private Set<Produto> produtos = new HashSet<>();
+
+    public void addProduto(Produto produto) {
+        produto.addPedido(this);
+        produtos.add(produto);
+    }
 }
 

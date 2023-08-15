@@ -39,9 +39,10 @@ public class ClienteEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PedidoEntity> pedidoEntities;
+    private Set<PedidoEntity> pedidoEntities = new HashSet<>();
 
     public void addEndereco(EnderecoEntity enderecoEntity) {
+
         enderecoEntities.add(enderecoEntity);
     }
 
