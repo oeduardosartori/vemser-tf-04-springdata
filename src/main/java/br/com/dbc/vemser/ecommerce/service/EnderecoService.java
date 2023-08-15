@@ -1,108 +1,106 @@
-<<<<<<< HEAD
 package br.com.dbc.vemser.ecommerce.service;
 
 
-import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteDTO;
 import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoDTO;
-import br.com.dbc.vemser.ecommerce.entity.Endereco;
+import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
+import br.com.dbc.vemser.ecommerce.entity.EnderecoEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.EnderecoRepository;
-import br.com.dbc.vemser.ecommerce.utils.NotificacaoByEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @Service
+@RequiredArgsConstructor
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
-    private final ClienteService clienteService;
-    private final NotificacaoByEmail notificacaoByEmail;
     private final ObjectMapper objectMapper;
-
+    // private final NotificacaoByEmail notificacaoByEmail;
     public List<EnderecoDTO> listarEnderecos() throws Exception {
-        List<Endereco> enderecos = enderecoRepository.findAll();
+        List<EnderecoEntity> enderecos = enderecoRepository.findAll();
         List<EnderecoDTO> enderecoDTOS = new ArrayList<>();
 
-        for (Endereco endereco : enderecos) {
+        for (EnderecoEntity endereco : enderecos) {
             enderecoDTOS.add(converterByEnderecoDTO(endereco));
         }
         return enderecoDTOS;
-
     }
 
     public EnderecoDTO getEnderecoById(Integer idEndereco) throws Exception {
-        Endereco endereco = enderecoRepository.getById(idEndereco);
-        if(endereco == null) {
+        Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findById(Math.toIntExact(idEndereco));
+        if (enderecoOpt.isEmpty()) {
             throw new RegraDeNegocioException("Endereço não encontrado");
         }
-        return converterByEnderecoDTO(endereco);
+        return converterByEnderecoDTO(enderecoOpt.get());
     }
+
     public List<EnderecoDTO> listarEnderecoByIdCliente(Integer idCliente) throws Exception {
-        ClienteDTO clienteDTO = clienteService.getClienteById(idCliente);
-        if(clienteDTO == null) {
-            throw new RegraDeNegocioException("Cliente não encontrado");
+        List<EnderecoEntity> enderecos = enderecoRepository.findByClienteId(idCliente);
+        if (enderecos.isEmpty()) {
+            throw new RegraDeNegocioException("Nenhum endereço encontrado para o cliente");
         }
 
-        enderecoRepository.findAllById(idCliente)
-        List<EnderecoDTO> enderecoDTOList =  enderecoRepository.findAllById(idCliente)
-                .stream().map(this::converterByEnderecoDTO).collect(Collectors.toList());
-
-        return enderecoDTOList;
+        return enderecos.stream()
+                .map(this::converterByEnderecoDTO)
+                .collect(Collectors.toList());
     }
 
     public EnderecoDTO create(Integer idCliente, EnderecoCreateDTO enderecoCreateDTO) throws Exception {
-        ClienteDTO clienteDTO = clienteService.getClienteById(idCliente);
-        if(clienteDTO == null) {
+        ClienteEntity clienteEntity = enderecoRepository.findClienteById(idCliente);
+        if (clienteEntity == null) {
             throw new RegraDeNegocioException("Cliente não encontrado");
         }
-        Endereco entity = converterByEndereco(enderecoCreateDTO);
 
-        Endereco enderecoCreated = enderecoRepository.create(idCliente, entity);
+        EnderecoEntity entity = converterByEndereco(enderecoCreateDTO);
+        entity.setCliente(clienteEntity);
 
-        EnderecoDTO enderecoDTO = converterByEnderecoDTO(enderecoCreated);
-        notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "criado");
-        return enderecoDTO;
+        EnderecoEntity enderecoCreated = enderecoRepository.save(entity);
+
+        return converterByEnderecoDTO(enderecoCreated);
     }
 
     public EnderecoDTO update(Integer idEndereco, EnderecoCreateDTO enderecoCreateDTO) throws Exception {
-        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
-        if(endereco == null) {
+        Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findById(idEndereco);
+        if (enderecoOpt.isEmpty()) {
             throw new RegraDeNegocioException("Endereço não encontrado");
         }
+        EnderecoEntity endereco = enderecoOpt.get();
 
-        enderecoCreateDTO.setIdCliente(endereco.getIdCliente());
-        Endereco entity = converterByEndereco(enderecoCreateDTO);
+        enderecoCreateDTO.setIdCliente(endereco.getCliente().getIdCliente());
+        EnderecoEntity entity = converterByEndereco(enderecoCreateDTO);
         entity.setIdEndereco(idEndereco);
 
-        Endereco enderecoUpdated = enderecoRepository.update(idEndereco, entity);
-        ClienteDTO clienteDTO = clienteService.getClienteById(enderecoUpdated.getIdCliente());
+        EnderecoEntity enderecoUpdated = enderecoRepository.save(entity);
 
         EnderecoDTO enderecoDTO = converterByEnderecoDTO(enderecoUpdated);
-        notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "atualizado");
 
         return enderecoDTO;
-
     }
 
     public void delete(Integer idEndereco) throws Exception {
-        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
-        if(endereco != null) {
-            ClienteDTO clienteDTO = clienteService.getClienteById(endereco.getIdCliente());
-            enderecoRepository.delete(idEndereco);
-            notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "deletado");
+        Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findById(idEndereco);
+        if (enderecoOpt.isPresent()) {
+            EnderecoEntity endereco = enderecoOpt.get();
+//             ClienteDTO clienteDTO = clienteService.getByid(endereco.getCliente().getId());
+            enderecoRepository.delete(endereco);
+//            notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "deletado");
         }
     }
 
-    public EnderecoDTO converterByEnderecoDTO(Endereco endereco) {
+    public EnderecoDTO converterByEnderecoDTO(EnderecoEntity endereco) {
         EnderecoDTO enderecoDTO = new EnderecoDTO();
         enderecoDTO.setIdEndereco(endereco.getIdEndereco());
-        enderecoDTO.setIdCliente(endereco.getIdCliente());
+        enderecoDTO.setIdCliente(endereco.getCliente().getIdCliente());
         enderecoDTO.setNumero(endereco.getNumero());
         enderecoDTO.setLogradouro(endereco.getLogradouro());
         enderecoDTO.setComplemento(endereco.getComplemento());
@@ -110,56 +108,35 @@ public class EnderecoService {
         enderecoDTO.setCidade(endereco.getCidade());
         enderecoDTO.setEstado(endereco.getEstado());
         enderecoDTO.setBairro(endereco.getBairro());
-
         return enderecoDTO;
     }
 
-    public Endereco converterByEndereco(EnderecoCreateDTO enderecoCreateDTO) {
-        Endereco entity = objectMapper.convertValue(enderecoCreateDTO, Endereco.class);
+    public EnderecoEntity converterByEndereco(EnderecoCreateDTO enderecoCreateDTO) {
+        EnderecoEntity entity = new EnderecoEntity();
         entity.setNumero(enderecoCreateDTO.getNumero());
         entity.setLogradouro(enderecoCreateDTO.getLogradouro());
         entity.setComplemento(enderecoCreateDTO.getComplemento());
         entity.setCep(enderecoCreateDTO.getCep());
         entity.setCidade(enderecoCreateDTO.getCidade());
         entity.setEstado(enderecoCreateDTO.getEstado());
-        entity.setIdCliente(enderecoCreateDTO.getIdCliente());
         entity.setBairro(enderecoCreateDTO.getBairro());
-
         return entity;
     }
-}
-=======
-//package br.com.dbc.vemser.ecommerce.service;
-//
-//
-//import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteDTO;
-//import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoCreateDTO;
-//import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoDTO;
-//import br.com.dbc.vemser.ecommerce.entity.Endereco;
-//import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
-//import br.com.dbc.vemser.ecommerce.repository.EnderecoRepository;
-//import br.com.dbc.vemser.ecommerce.utils.NotificacaoByEmail;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import lombok.Data;
-//import org.springframework.stereotype.Service;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//@Data
-//@Service
-//public class EnderecoService {
-//
+
+    //    CÓDIGO ANTERIOR PARA BACKUP
+
+//    ===========================
+
 //    private final EnderecoRepository enderecoRepository;
 //    private final ClienteService clienteService;
 //    private final NotificacaoByEmail notificacaoByEmail;
 //    private final ObjectMapper objectMapper;
 //
 //    public List<EnderecoDTO> listarEnderecos() throws Exception {
-//        List<Endereco> enderecos = enderecoRepository.listarEnderecos();
+//        List<EnderecoEntity> enderecos = enderecoRepository.listarEnderecos();
 //        List<EnderecoDTO> enderecoDTOS = new ArrayList<>();
 //
-//        for (Endereco endereco : enderecos) {
+//        for (EnderecoEntity endereco : enderecos) {
 //            enderecoDTOS.add(converterByEnderecoDTO(endereco));
 //        }
 //        return enderecoDTOS;
@@ -167,7 +144,7 @@ public class EnderecoService {
 //    }
 //
 //    public EnderecoDTO getEnderecoById(Integer idEndereco) throws Exception {
-//        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
+//        EnderecoEntity endereco = enderecoRepository.getEnderecoById(idEndereco);
 //        if(endereco == null) {
 //            throw new RegraDeNegocioException("Endereço não encontrado");
 //        }
@@ -189,9 +166,9 @@ public class EnderecoService {
 //        if(clienteDTO == null) {
 //            throw new RegraDeNegocioException("Cliente não encontrado");
 //        }
-//        Endereco entity = converterByEndereco(enderecoCreateDTO);
+//        EnderecoEntity entity = converterByEndereco(enderecoCreateDTO);
 //
-//        Endereco enderecoCreated = enderecoRepository.create(idCliente, entity);
+//        EnderecoEntity enderecoCreated = enderecoRepository.create(idCliente, entity);
 //
 //        EnderecoDTO enderecoDTO = converterByEnderecoDTO(enderecoCreated);
 //        notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "criado");
@@ -199,16 +176,16 @@ public class EnderecoService {
 //    }
 //
 //    public EnderecoDTO update(Integer idEndereco, EnderecoCreateDTO enderecoCreateDTO) throws Exception {
-//        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
+//        EnderecoEntity endereco = enderecoRepository.getEnderecoById(idEndereco);
 //        if(endereco == null) {
 //            throw new RegraDeNegocioException("Endereço não encontrado");
 //        }
 //
 //        enderecoCreateDTO.setIdCliente(endereco.getIdCliente());
-//        Endereco entity = converterByEndereco(enderecoCreateDTO);
+//        EnderecoEntity entity = converterByEndereco(enderecoCreateDTO);
 //        entity.setIdEndereco(idEndereco);
 //
-//        Endereco enderecoUpdated = enderecoRepository.update(idEndereco, entity);
+//        EnderecoEntity enderecoUpdated = enderecoRepository.update(idEndereco, entity);
 //        ClienteDTO clienteDTO = clienteService.getClienteById(enderecoUpdated.getIdCliente());
 //
 //        EnderecoDTO enderecoDTO = converterByEnderecoDTO(enderecoUpdated);
@@ -219,7 +196,7 @@ public class EnderecoService {
 //    }
 //
 //    public void delete(Integer idEndereco) throws Exception {
-//        Endereco endereco = enderecoRepository.getEnderecoById(idEndereco);
+//        EnderecoEntity endereco = enderecoRepository.getEnderecoById(idEndereco);
 //        if(endereco != null) {
 //            ClienteDTO clienteDTO = clienteService.getClienteById(endereco.getIdCliente());
 //            enderecoRepository.delete(idEndereco);
@@ -227,7 +204,7 @@ public class EnderecoService {
 //        }
 //    }
 //
-//    public EnderecoDTO converterByEnderecoDTO(Endereco endereco) {
+//    public EnderecoDTO converterByEnderecoDTO(EnderecoEntity endereco) {
 //        EnderecoDTO enderecoDTO = new EnderecoDTO();
 //        enderecoDTO.setIdEndereco(endereco.getIdEndereco());
 //        enderecoDTO.setIdCliente(endereco.getIdCliente());
@@ -242,8 +219,8 @@ public class EnderecoService {
 //        return enderecoDTO;
 //    }
 //
-//    public Endereco converterByEndereco(EnderecoCreateDTO enderecoCreateDTO) {
-//        Endereco entity = objectMapper.convertValue(enderecoCreateDTO, Endereco.class);
+//    public EnderecoEntity converterByEndereco(EnderecoCreateDTO enderecoCreateDTO) {
+//        EnderecoEntity entity = objectMapper.convertValue(enderecoCreateDTO, Endereco.class);
 //        entity.setNumero(enderecoCreateDTO.getNumero());
 //        entity.setLogradouro(enderecoCreateDTO.getLogradouro());
 //        entity.setComplemento(enderecoCreateDTO.getComplemento());
@@ -255,5 +232,4 @@ public class EnderecoService {
 //
 //        return entity;
 //    }
-//}
->>>>>>> developer
+}
