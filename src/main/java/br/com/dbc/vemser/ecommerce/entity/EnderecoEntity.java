@@ -1,6 +1,9 @@
 package br.com.dbc.vemser.ecommerce.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -39,7 +42,7 @@ public class EnderecoEntity {
     @Column(name = "CIDADE")
     private String cidade;
 
-    @Column(name = "ESTADO")
+    @Column(name = "UF_ESTADO")
     private String estado;
 
 }
