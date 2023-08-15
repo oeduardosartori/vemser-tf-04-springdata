@@ -23,8 +23,8 @@ public class ProdutoController implements ProdutoControllerDoc {
     private final ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<List<ProdutoDTO>> listarProdutos() throws Exception {
-        return new ResponseEntity<>(produtoService.listar(), HttpStatus.OK);
+    public ResponseEntity<List<ProdutoDTO>> listarProdutos(@RequestParam(required = false) Integer idProduto) throws Exception {
+        return new ResponseEntity<>(produtoService.listar(idProduto), HttpStatus.OK);
     }
 
 
