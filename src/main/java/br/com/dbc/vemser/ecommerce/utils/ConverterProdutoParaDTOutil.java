@@ -3,7 +3,7 @@ package br.com.dbc.vemser.ecommerce.utils;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
-import br.com.dbc.vemser.ecommerce.entity.Produto;
+import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,31 +18,31 @@ public class ConverterProdutoParaDTOutil {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public ProdutoDTO converteProdutoParaDTO(Produto produtoUpdate) {
+    public ProdutoDTO converteProdutoParaDTO(ProdutoEntity produtoEntityUpdate) {
         ProdutoDTO produtoUpdateDTO = new ProdutoDTO();
 
 
-        produtoUpdateDTO.setIdProduto(produtoUpdate.getIdProduto());
-        produtoUpdateDTO.setCor(produtoUpdate.getCor());
-        produtoUpdateDTO.setModelo(produtoUpdate.getModelo());
-        produtoUpdateDTO.setTamanho(produtoUpdate.getTamanho());
-        produtoUpdateDTO.setIdProduto(produtoUpdate.getIdProduto());
-        produtoUpdateDTO.setSetor(produtoUpdate.getSetor());
-        produtoUpdateDTO.setValor(produtoUpdate.getValor());
+        produtoUpdateDTO.setIdProduto(produtoEntityUpdate.getIdProduto());
+        produtoUpdateDTO.setCor(produtoEntityUpdate.getCor());
+        produtoUpdateDTO.setModelo(produtoEntityUpdate.getModelo());
+        produtoUpdateDTO.setTamanho(produtoEntityUpdate.getTamanho());
+        produtoUpdateDTO.setIdProduto(produtoEntityUpdate.getIdProduto());
+        produtoUpdateDTO.setSetor(produtoEntityUpdate.getSetor());
+        produtoUpdateDTO.setValor(produtoEntityUpdate.getValor());
 
 
         return produtoUpdateDTO;
     }
 
-    public Produto converteDTOparaProduto(ProdutoCreateDTO produtoCreateDTO) {
-        Produto produtoConvertido = objectMapper.convertValue(produtoCreateDTO, Produto.class);
+    public ProdutoEntity converteDTOparaProduto(ProdutoCreateDTO produtoCreateDTO) {
+        ProdutoEntity produtoEntityConvertido = objectMapper.convertValue(produtoCreateDTO, ProdutoEntity.class);
 
-        produtoConvertido.setCor(produtoCreateDTO.getCor());
-        produtoConvertido.setModelo(produtoCreateDTO.getModelo());
-        produtoConvertido.setTamanho(produtoCreateDTO.getTamanho());
-        produtoConvertido.setSetor(produtoCreateDTO.getSetor());
-        produtoConvertido.setValor(produtoCreateDTO.getValor());
+        produtoEntityConvertido.setCor(produtoCreateDTO.getCor());
+        produtoEntityConvertido.setModelo(produtoCreateDTO.getModelo());
+        produtoEntityConvertido.setTamanho(produtoCreateDTO.getTamanho());
+        produtoEntityConvertido.setSetor(produtoCreateDTO.getSetor());
+        produtoEntityConvertido.setValor(produtoCreateDTO.getValor());
 
-        return produtoConvertido;
+        return produtoEntityConvertido;
     }
 }

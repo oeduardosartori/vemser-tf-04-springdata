@@ -5,7 +5,7 @@ import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoDTO;
 import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
 import br.com.dbc.vemser.ecommerce.entity.PedidoEntity;
-import br.com.dbc.vemser.ecommerce.entity.Produto;
+import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ClienteRepository;
 import br.com.dbc.vemser.ecommerce.repository.PedidoRepository;
@@ -32,11 +32,11 @@ public class PedidoService {
     public PedidoDTO criarPedido(Integer idCliente, PedidoCreateDTO idProduto) throws Exception {
 
         ClienteEntity cliente = clienteService.findById(idCliente);
-        Produto produtoBuscado = produtoRepository.findByIdProduto(idProduto.getIdProduto());
+        ProdutoEntity produtoEntityBuscado = produtoRepository.findByIdProduto(idProduto.getIdProduto());
 
         PedidoEntity pedido = new PedidoEntity();
         pedido.setStatusPedido("N");
-        pedido.addProduto(produtoBuscado);
+        pedido.addProduto(produtoEntityBuscado);
         pedido.setCliente(cliente);
 
 
@@ -74,10 +74,10 @@ public class PedidoService {
 
         validacaoPedidoFinalizado(pedidoAchado);
 
-        Produto produtoBuscado = produtoRepository.findByIdProduto(idProduto);
-        if (produtoBuscado == null) throw new RegraDeNegocioException("Produto não encontrado!");
+        ProdutoEntity produtoEntityBuscado = produtoRepository.findByIdProduto(idProduto);
+        if (produtoEntityBuscado == null) throw new RegraDeNegocioException("Produto não encontrado!");
 
-        pedidoAchado.addProduto(produtoBuscado);
+        pedidoAchado.addProduto(produtoEntityBuscado);
 
         pedidoRepository.save(pedidoAchado);
 
@@ -97,10 +97,10 @@ public class PedidoService {
 
         validacaoPedidoFinalizado(pedidoAchado);
 
-        Produto produtoBuscado = produtoRepository.findByIdProduto(idProduto);
-        if (produtoBuscado == null) throw new RegraDeNegocioException("Produto não encontrado!");
+        ProdutoEntity produtoEntityBuscado = produtoRepository.findByIdProduto(idProduto);
+        if (produtoEntityBuscado == null) throw new RegraDeNegocioException("Produto não encontrado!");
 
-        pedidoAchado.removerProduto(produtoBuscado);
+        pedidoAchado.removerProduto(produtoEntityBuscado);
 
         pedidoRepository.save(pedidoAchado);
 
@@ -114,7 +114,7 @@ public class PedidoService {
         PedidoEntity pedidoEntity = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new RegraDeNegocioException("Pedido não encontrado!"));
 
-        pedidoEntity.getProdutos().forEach(pedidoEntity::removerProduto);
+        pedidoEntity.getProdutoEntities().forEach(pedidoEntity::removerProduto);
 
         pedidoRepository.delete(pedidoEntity);
 
