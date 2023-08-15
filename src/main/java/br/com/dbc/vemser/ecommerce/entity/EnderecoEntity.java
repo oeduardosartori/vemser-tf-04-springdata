@@ -18,8 +18,9 @@ public class EnderecoEntity {
     @Column(name = "ID_ENDERECO")
     private Integer idEndereco;
 
-
-    //    private Integer idCliente;
+    @ManyToOne
+    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID_CLIENTE")
+    private ClienteEntity cliente;
 
     @Column(name = "LOGRADOURO")
     private String logradouro;
@@ -42,7 +43,4 @@ public class EnderecoEntity {
     @Column(name = "ESTADO")
     private String estado;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_CLIENTE", referencedColumnName = "ID_CLIENTE")
-    private Cliente cliente;
 }
