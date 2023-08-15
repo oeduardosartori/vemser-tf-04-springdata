@@ -7,6 +7,8 @@ import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoDTO;
 import br.com.dbc.vemser.ecommerce.service.EnderecoService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -39,6 +41,11 @@ public class EnderecoController implements EnderecoControllerDoc {
     @GetMapping("/cliente/{idCliente}")
     public ResponseEntity<List<EnderecoDTO>> listarEnderecoByIdCliente(@Positive(message = "id deve ser maior que zero") @PathVariable("idCliente") Integer idCliente) throws Exception {
         return new ResponseEntity<>(enderecoService.listarEnderecoByIdCliente(idCliente), HttpStatus.OK);
+    }
+
+    @GetMapping("/paginado/por-cidade")
+    public Page<EnderecoDTO> listarEnderecosPorCidadePaginados(@RequestParam String cidade, Pageable pageable) {
+        return enderecoService.listarEnderecosPorCidadePaginados(cidade, pageable);
     }
 
     @PostMapping("/{idCliente}")

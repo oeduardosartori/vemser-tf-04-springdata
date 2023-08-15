@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -129,5 +131,9 @@ public class EnderecoService {
         return entity;
     }
 
+    public Page<EnderecoDTO> listarEnderecosPorCidadePaginados(String cidade, Pageable pageable) {
+        Page<EnderecoEntity> enderecoPage = enderecoRepository.listarEnderecosPaginadosPorCidade(cidade, pageable);
+        return enderecoPage.map(this::converterByEnderecoDTO);
+    }
 
 }

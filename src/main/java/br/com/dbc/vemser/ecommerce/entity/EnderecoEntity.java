@@ -39,7 +39,7 @@ public class EnderecoEntity {
     @Column(name = "CIDADE")
     private String cidade;
 
-    @Column(name = "ESTADO")
+    @Column(name = "UF_ESTADO")
     private String estado;
 
 }
