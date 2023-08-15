@@ -9,9 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Integer> {
-
     ProdutoEntity findByIdProduto(Integer idProduto);
-
 
     @Query("Select p From PRODUTO p where (:idProduto is null or p.idProduto = :idProduto)")
     List<ProdutoEntity> buscarTodosOptionalId(Integer idProduto);
