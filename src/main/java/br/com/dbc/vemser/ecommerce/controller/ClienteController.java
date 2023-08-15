@@ -5,7 +5,8 @@ import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteDTO;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.service.ClienteService;
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Data
 @Validated
-@AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/cliente")
 public class ClienteController implements ClienteControllerDoc {
 
