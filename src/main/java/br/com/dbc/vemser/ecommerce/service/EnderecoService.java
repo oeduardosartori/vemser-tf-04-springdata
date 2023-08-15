@@ -6,6 +6,7 @@ import br.com.dbc.vemser.ecommerce.dto.endereco.EnderecoDTO;
 import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
 import br.com.dbc.vemser.ecommerce.entity.EnderecoEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
+import br.com.dbc.vemser.ecommerce.repository.ClienteRepository;
 import br.com.dbc.vemser.ecommerce.repository.EnderecoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
+    private final ClienteRepository clienteRepository;
     private final ObjectMapper objectMapper;
 
     // private final NotificacaoByEmail notificacaoByEmail;
@@ -47,7 +49,8 @@ public class EnderecoService {
     }
 
     public List<EnderecoDTO> listarEnderecoByIdCliente(Integer idCliente) throws Exception {
-        List<EnderecoEntity> enderecos = enderecoRepository.findByClienteId(idCliente);
+        List<EnderecoEntity> enderecos = enderecoRepository
+                .findEnderecoEntityByCliente_IdCliente(idCliente);
         if (enderecos.isEmpty()) {
             throw new RegraDeNegocioException("Nenhum endereço encontrado para o cliente");
         }
@@ -58,7 +61,8 @@ public class EnderecoService {
     }
 
     public EnderecoDTO create(Integer idCliente, EnderecoCreateDTO enderecoCreateDTO) throws Exception {
-        ClienteEntity clienteEntity = enderecoRepository.findClienteById(idCliente);
+        ClienteEntity clienteEntity = clienteRepository.findById(idCliente).get();
+
         if (clienteEntity == null) {
             throw new RegraDeNegocioException("Cliente não encontrado");
         }

@@ -2,14 +2,16 @@ package br.com.dbc.vemser.ecommerce.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "PRODUTO")
@@ -42,11 +44,16 @@ public class Produto {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "produtos", cascade = CascadeType.ALL)
-    private Set<PedidoEntity> pedidos = new HashSet<>();
+    private List<PedidoEntity> pedidos = new ArrayList<>();
 
     public void addPedido(PedidoEntity pedidoEntity) {
 
         pedidos.add(pedidoEntity);
+    }
+
+    public void removePedido(PedidoEntity pedidoEntity) {
+
+        pedidos.remove(pedidoEntity);
     }
 
 }
