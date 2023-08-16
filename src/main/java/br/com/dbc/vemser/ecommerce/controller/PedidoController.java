@@ -29,6 +29,18 @@ public class PedidoController implements PedidoControllerDoc {
 
     private final PedidoService pedidoService;
 
+
+
+    @GetMapping
+    public ResponseEntity<List<PedidoDTO>> listar() {
+        return new ResponseEntity<>(pedidoService.listar(), HttpStatus.OK);
+    }
+
+    @GetMapping("/relatorio-cliente-pedido")
+    public ResponseEntity<List<RelatorioPedidoDTO>> listarClientesRelatorio() {
+        return new ResponseEntity<>(pedidoService.relatorioPedido(), HttpStatus.OK);
+    }
+
     @GetMapping("/relatorio-cliente-pedido-paginado")
     public Page<RelatorioPedidoDTO> listarRelatorioPaginado(Integer pagina,
 
@@ -40,16 +52,6 @@ public class PedidoController implements PedidoControllerDoc {
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros, ordenacao);
 
         return pedidoService.listarRelatorioPaginado(pageable);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<PedidoDTO>> listar() {
-        return new ResponseEntity<>(pedidoService.listar(), HttpStatus.OK);
-    }
-
-    @GetMapping("/relatorio-cliente-pedido")
-    public ResponseEntity<List<RelatorioPedidoDTO>> listarClientesRelatorio() {
-        return new ResponseEntity<>(pedidoService.relatorioPedido(), HttpStatus.OK);
     }
 
     @Override
