@@ -3,6 +3,7 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoDTO;
+import br.com.dbc.vemser.ecommerce.dto.pedido.RelatorioPedidoDTO;
 import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
 import br.com.dbc.vemser.ecommerce.entity.PedidoEntity;
 import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
@@ -12,6 +13,8 @@ import br.com.dbc.vemser.ecommerce.repository.PedidoRepository;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +43,8 @@ public class PedidoService {
         pedido.setCliente(cliente);
 
 
-        PedidoDTO pedidoOutputDTO = objectMapper.convertValue(pedidoRepository.save(
-                        pedido)
-                , PedidoDTO.class);
+        PedidoDTO pedidoOutputDTO = converterPedidooParaDTO(pedidoRepository.save(
+                pedido));
 
 
         return pedidoOutputDTO;
@@ -53,6 +55,17 @@ public class PedidoService {
         return pedidoRepository.findAll().stream()
                 .map(p -> converterPedidooParaDTO(p)).toList();
 
+    }
+
+    public Page<RelatorioPedidoDTO> listarRelatorioPaginado(Pageable pageable) {
+
+        return pedidoRepository.buscarTodosRelatoriosPedidosPaginacao(pageable);
+
+    }
+
+    public List<RelatorioPedidoDTO> relatorioPedido() {
+
+        return pedidoRepository.relatorioPedido();
     }
 
 
