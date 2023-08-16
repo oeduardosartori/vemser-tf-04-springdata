@@ -3,6 +3,7 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoDTO;
+import br.com.dbc.vemser.ecommerce.dto.pedido.RelatorioPedidoDTO;
 import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
 import br.com.dbc.vemser.ecommerce.entity.PedidoEntity;
 import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
@@ -12,6 +13,8 @@ import br.com.dbc.vemser.ecommerce.repository.PedidoRepository;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,9 +43,8 @@ public class PedidoService {
         pedido.setCliente(cliente);
 
 
-        PedidoDTO pedidoOutputDTO = objectMapper.convertValue(pedidoRepository.save(
-                        pedido)
-                , PedidoDTO.class);
+        PedidoDTO pedidoOutputDTO = converterPedidooParaDTO(pedidoRepository.save(
+                pedido));
 
 
         return pedidoOutputDTO;
@@ -51,8 +53,29 @@ public class PedidoService {
     public List<PedidoDTO> listar() {
 
         return pedidoRepository.findAll().stream()
-                .map(p -> objectMapper.convertValue(p, PedidoDTO.class)).toList();
+                .map(p -> converterPedidooParaDTO(p)).toList();
 
+    }
+
+    public Page<RelatorioPedidoDTO> listarRelatorioPaginado(Pageable pageable) {
+
+        return pedidoRepository.buscarTodosRelatoriosPedidosPaginacao(pageable);
+
+    }
+
+    public List<RelatorioPedidoDTO> relatorioPedido() {
+
+        return pedidoRepository.relatorioPedido();
+    }
+
+
+    private PedidoDTO converterPedidooParaDTO(PedidoEntity pedido) {
+
+        PedidoDTO pedidoDTO = objectMapper.convertValue(pedido, PedidoDTO.class);
+        pedidoDTO.setIdCliente(pedido.getCliente().getIdCliente());
+        pedidoDTO.setProdutos(pedido.getProdutoEntities());
+
+        return pedidoDTO;
     }
 
     public PedidoDTO buscarByIdPedido(Integer idPedido) throws RegraDeNegocioException {
@@ -62,7 +85,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Pedido nao encontrado!"));
 
 
-        return objectMapper.convertValue(pedidoEntity, PedidoDTO.class);
+        return converterPedidooParaDTO(pedidoEntity);
 
     }
 

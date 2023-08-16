@@ -3,9 +3,14 @@ package br.com.dbc.vemser.ecommerce.controller;
 import br.com.dbc.vemser.ecommerce.doc.PedidoControllerDoc;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.pedido.PedidoDTO;
+import br.com.dbc.vemser.ecommerce.dto.pedido.RelatorioPedidoDTO;
 import br.com.dbc.vemser.ecommerce.service.PedidoService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,9 +29,29 @@ public class PedidoController implements PedidoControllerDoc {
 
     private final PedidoService pedidoService;
 
+
+
     @GetMapping
-    public ResponseEntity<List<PedidoDTO>> listar() throws Exception {
+    public ResponseEntity<List<PedidoDTO>> listar() {
         return new ResponseEntity<>(pedidoService.listar(), HttpStatus.OK);
+    }
+
+    @GetMapping("/relatorio-cliente-pedido")
+    public ResponseEntity<List<RelatorioPedidoDTO>> listarClientesRelatorio() {
+        return new ResponseEntity<>(pedidoService.relatorioPedido(), HttpStatus.OK);
+    }
+
+    @GetMapping("/relatorio-cliente-pedido-paginado")
+    public Page<RelatorioPedidoDTO> listarRelatorioPaginado(Integer pagina,
+
+                                                            Integer quantidadeRegistros) {
+
+        Sort ordenacao = Sort.by("valor").descending()
+                .and(Sort.by("statusPedido"));
+
+        Pageable pageable = PageRequest.of(pagina, quantidadeRegistros, ordenacao);
+
+        return pedidoService.listarRelatorioPaginado(pageable);
     }
 
     @Override
@@ -67,7 +92,7 @@ public class PedidoController implements PedidoControllerDoc {
 
     @PutMapping("/{idPedido}/carrinho-remover/{idProduto}")
     public ResponseEntity<Void> removerProdutoDoPedido(@PathVariable Integer idPedido,
-                                                            @PathVariable Integer idProduto) throws Exception {
+                                                       @PathVariable Integer idProduto) throws Exception {
         pedidoService.removerProdutoDoPedido(idPedido, idProduto);
 
         return ResponseEntity.ok().build();
