@@ -12,8 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class EnderecoService {
     private final ClienteRepository clienteRepository;
     private final ObjectMapper objectMapper;
 
-    // private final NotificacaoByEmail notificacaoByEmail;
     public List<EnderecoDTO> listarEnderecos() throws Exception {
         List<EnderecoEntity> enderecos = enderecoRepository.findAll();
         List<EnderecoDTO> enderecoDTOS = new ArrayList<>();
@@ -99,9 +97,7 @@ public class EnderecoService {
         Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findById(idEndereco);
         if (enderecoOpt.isPresent()) {
             EnderecoEntity endereco = enderecoOpt.get();
-//             ClienteDTO clienteDTO = clienteService.getByid(endereco.getCliente().getId());
             enderecoRepository.delete(endereco);
-//            notificacaoByEmail.notificarByEmailEndereco(clienteDTO, "deletado");
         }
     }
 
@@ -131,9 +127,5 @@ public class EnderecoService {
         return entity;
     }
 
-    public Page<EnderecoDTO> listarEnderecosPorCidadePaginados(String cidade, Pageable pageable) {
-        Page<EnderecoEntity> enderecoPage = enderecoRepository.listarEnderecosPaginadosPorCidade(cidade, pageable);
-        return enderecoPage.map(this::converterByEnderecoDTO);
-    }
 
 }
