@@ -1,6 +1,7 @@
 package br.com.dbc.vemser.ecommerce.dto.pedido;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
+import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,6 @@ public class PedidoDTO {
 
     private String statusPedido;
 
-    List<ProdutoDTO> produtos;
+    List<ProdutoEntity> produtos;
 
 }

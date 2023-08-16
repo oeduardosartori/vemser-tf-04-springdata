@@ -51,8 +51,18 @@ public class PedidoService {
     public List<PedidoDTO> listar() {
 
         return pedidoRepository.findAll().stream()
-                .map(p -> objectMapper.convertValue(p, PedidoDTO.class)).toList();
+                .map(p -> converterPedidooParaDTO(p)).toList();
 
+    }
+
+
+    private PedidoDTO converterPedidooParaDTO(PedidoEntity pedido) {
+
+        PedidoDTO pedidoDTO = objectMapper.convertValue(pedido, PedidoDTO.class);
+        pedidoDTO.setIdCliente(pedido.getCliente().getIdCliente());
+        pedidoDTO.setProdutos(pedido.getProdutoEntities());
+
+        return pedidoDTO;
     }
 
     public PedidoDTO buscarByIdPedido(Integer idPedido) throws RegraDeNegocioException {
@@ -62,7 +72,7 @@ public class PedidoService {
                 .orElseThrow(() -> new RegraDeNegocioException("Pedido nao encontrado!"));
 
 
-        return objectMapper.convertValue(pedidoEntity, PedidoDTO.class);
+        return converterPedidooParaDTO(pedidoEntity);
 
     }
 
