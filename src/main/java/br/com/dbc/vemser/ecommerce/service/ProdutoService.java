@@ -3,11 +3,8 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
-
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoEntityDTO;
-
 import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
-
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import br.com.dbc.vemser.ecommerce.utils.ConverterProdutoParaDTOutil;
@@ -27,19 +24,19 @@ public class ProdutoService {
     private final ConverterProdutoParaDTOutil converterProdutoParaDTOutil;
 
 
-    public List<ProdutoDTO> listar(Integer idProduto) throws Exception {
+    public List<ProdutoDTO> listar(Integer idProduto) {
 
         return produtoRepository.buscarTodosOptionalId(idProduto).stream()
                 .map(converterProdutoParaDTOutil::converteProdutoParaDTO).toList();
     }
 
-    public Page<ProdutoEntityDTO> listarPaginado(Pageable pageable) throws Exception {
+    public Page<ProdutoEntityDTO> listarPaginado(Pageable pageable) {
 
         return produtoRepository.buscarTodosProdutoPaginacao(pageable);
 
     }
 
-    public ProdutoDTO buscarProduto(Integer idProduto) throws Exception {
+    public ProdutoDTO buscarProduto(Integer idProduto) throws RegraDeNegocioException {
 
         ProdutoEntity produtoEntity = produtoRepository.findByIdProduto(idProduto);
 
@@ -52,7 +49,7 @@ public class ProdutoService {
     }
 
 
-    public ProdutoDTO salvar(ProdutoCreateDTO produtoCreateDTO) throws Exception {
+    public ProdutoDTO salvar(ProdutoCreateDTO produtoCreateDTO) {
 
         ProdutoEntity produtoEntity = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
 
@@ -61,7 +58,7 @@ public class ProdutoService {
         return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityBuscado);
     }
 
-    public ProdutoDTO atualizar(Integer idProduto, ProdutoCreateDTO produtoCreateDTO) throws Exception {
+    public ProdutoDTO atualizar(Integer idProduto, ProdutoCreateDTO produtoCreateDTO) throws RegraDeNegocioException {
 
         ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
         if (buscarProdutoEntity == null) {
@@ -74,7 +71,7 @@ public class ProdutoService {
         return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityAtualizado);
     }
 
-    public void deletar(Integer idProduto) throws Exception {
+    public void deletar(Integer idProduto) {
 
         ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
 
