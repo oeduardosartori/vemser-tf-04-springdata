@@ -29,7 +29,6 @@ public class PedidoService {
 
     private final ClienteService clienteService;
     private final ClienteRepository clienteRepository;
-    //    private final NotificacaoByEmail notificacaoByEmail;
     private final ObjectMapper objectMapper;
 
     public PedidoDTO criarPedido(Integer idCliente, PedidoCreateDTO idProduto) throws Exception {
@@ -163,10 +162,6 @@ public class PedidoService {
 
         PedidoDTO pedidoDTO = objectMapper.convertValue(save, PedidoDTO.class);
 
-
-//            notificacaoByEmail
-//                    .notificarByEmailPedidoCliente(byid,
-//                            pedidoDTO);
 
 
         return pedidoDTO;
