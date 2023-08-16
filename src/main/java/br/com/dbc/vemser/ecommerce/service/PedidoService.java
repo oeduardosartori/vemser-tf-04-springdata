@@ -43,9 +43,8 @@ public class PedidoService {
         pedido.setCliente(cliente);
 
 
-        PedidoDTO pedidoOutputDTO = objectMapper.convertValue(pedidoRepository.save(
-                        pedido)
-                , PedidoDTO.class);
+        PedidoDTO pedidoOutputDTO = converterPedidooParaDTO(pedidoRepository.save(
+                pedido));
 
 
         return pedidoOutputDTO;
@@ -68,8 +67,6 @@ public class PedidoService {
 
         return pedidoRepository.relatorioPedido();
     }
-
-
 
 
     private PedidoDTO converterPedidooParaDTO(PedidoEntity pedido) {
