@@ -3,16 +3,17 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
-
-import br.com.dbc.vemser.ecommerce.entity.Produto;
+import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoEntityDTO;
+import br.com.dbc.vemser.ecommerce.entity.ProdutoEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ProdutoRepository;
 import br.com.dbc.vemser.ecommerce.utils.ConverterProdutoParaDTOutil;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,53 +24,60 @@ public class ProdutoService {
     private final ConverterProdutoParaDTOutil converterProdutoParaDTOutil;
 
 
-    public List<ProdutoDTO> listar() throws Exception {
+    public List<ProdutoDTO> listar(Integer idProduto) {
 
-        return produtoRepository.listar().stream()
-                .map(converterProdutoParaDTOutil::converteProdutoParaDTO)
-                .collect(Collectors.toList());
+        return produtoRepository.buscarTodosOptionalId(idProduto).stream()
+                .map(converterProdutoParaDTOutil::converteProdutoParaDTO).toList();
     }
 
-    public ProdutoDTO buscarProduto(Integer idProduto) throws Exception {
+    public Page<ProdutoEntityDTO> listarPaginado(Pageable pageable) {
 
-        Produto produto = produtoRepository.buscarProduto(idProduto);
+        return produtoRepository.buscarTodosProdutoPaginacao(pageable);
 
-        if (produto == null) {
+    }
+
+    public ProdutoDTO buscarProduto(Integer idProduto) throws RegraDeNegocioException {
+
+        ProdutoEntity produtoEntity = produtoRepository.findByIdProduto(idProduto);
+
+        if (produtoEntity == null) {
             throw new RegraDeNegocioException("Produto não cadastrado.");
         }
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produto);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntity);
 
     }
 
 
-    public ProdutoDTO salvar(ProdutoCreateDTO produtoCreateDTO) throws Exception {
+    public ProdutoDTO salvar(ProdutoCreateDTO produtoCreateDTO) {
 
-        Produto produto = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
+        ProdutoEntity produtoEntity = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
 
-        Produto produtoBuscado = produtoRepository.criarProduto(produto);
+        ProdutoEntity produtoEntityBuscado = produtoRepository.save(produtoEntity);
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoBuscado);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityBuscado);
     }
 
-    public ProdutoDTO atualizar(Integer idProduto, ProdutoCreateDTO produtoCreateDTO) throws Exception {
+    public ProdutoDTO atualizar(Integer idProduto, ProdutoCreateDTO produtoCreateDTO) throws RegraDeNegocioException {
 
-        Produto buscarProduto = produtoRepository.buscarProduto(idProduto);
-        if (buscarProduto == null) {
+        ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
+        if (buscarProdutoEntity == null) {
             throw new RegraDeNegocioException("Produto não cadastrado!");
         }
-        Produto produto = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
+        ProdutoEntity produtoEntity = converterProdutoParaDTOutil.converteDTOparaProduto(produtoCreateDTO);
 
-        Produto produtoAtualizado = produtoRepository.atualizar(idProduto, produto);
+        ProdutoEntity produtoEntityAtualizado = produtoRepository.save(produtoEntity);
 
-        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoAtualizado);
+        return converterProdutoParaDTOutil.converteProdutoParaDTO(produtoEntityAtualizado);
     }
 
-    public void deletar(Integer idProduto) throws Exception {
+    public void deletar(Integer idProduto) {
 
-        Produto buscarProduto = produtoRepository.buscarProduto(idProduto);
+        ProdutoEntity buscarProdutoEntity = produtoRepository.findByIdProduto(idProduto);
 
-        produtoRepository.deletar(idProduto);
+        produtoRepository.delete(buscarProdutoEntity);
 
     }
+
+
 }

@@ -3,8 +3,10 @@ package br.com.dbc.vemser.ecommerce.controller;
 import br.com.dbc.vemser.ecommerce.doc.ClienteControllerDoc;
 import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteDTO;
+import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.service.ClienteService;
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,36 +14,37 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Data
 @Validated
-@AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/cliente")
 public class ClienteController implements ClienteControllerDoc {
 
     private final ClienteService clienteService;
 
-    @GetMapping
-    public ResponseEntity<List<ClienteDTO>> List() throws Exception {
-        return new ResponseEntity<List<ClienteDTO>>(clienteService.list(), HttpStatus.OK);
+    @Override
+    public ResponseEntity<List<ClienteDTO>> findAll(@RequestParam(required = false) Integer idCliente){
+        return new ResponseEntity<List<ClienteDTO>>(clienteService.findAll(idCliente), HttpStatus.OK);
     }
 
-    @GetMapping("/{idCliente}")
-    public ResponseEntity<ClienteDTO> getClienteById(@PathVariable Integer idCliente) throws Exception {
-        return new ResponseEntity<ClienteDTO>(clienteService.getClienteById(idCliente), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ClienteDTO> getById(@PathVariable Integer idCliente) throws RegraDeNegocioException {
+        return new ResponseEntity<ClienteDTO>(clienteService.getByid(idCliente), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ClienteDTO> create(@RequestBody ClienteCreateDTO cliente) throws Exception{
-        return new ResponseEntity<ClienteDTO>(clienteService.create(cliente), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ClienteDTO> save(@RequestBody ClienteCreateDTO cliente){
+        return new ResponseEntity<ClienteDTO>(clienteService.save(cliente), HttpStatus.OK);
     }
 
-    @PutMapping("/{idCliente}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable Integer idCliente, @RequestBody ClienteCreateDTO cliente) throws Exception{
+    @Override
+    public ResponseEntity<ClienteDTO> update(@PathVariable Integer idCliente, @RequestBody ClienteCreateDTO cliente) throws RegraDeNegocioException{
         return new ResponseEntity<ClienteDTO>(clienteService.update(idCliente, cliente), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{idCliente}")
-    public ResponseEntity<Void> delete(@PathVariable Integer idCliente) throws Exception{
+    @Override
+    public ResponseEntity<Void> delete(@PathVariable Integer idCliente){
         clienteService.delete(idCliente);
         return ResponseEntity.ok().build();
     }

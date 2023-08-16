@@ -2,94 +2,66 @@ package br.com.dbc.vemser.ecommerce.service;
 
 import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.cliente.ClienteDTO;
-import br.com.dbc.vemser.ecommerce.entity.Cliente;
-import br.com.dbc.vemser.ecommerce.exceptions.BancoDeDadosException;
+import br.com.dbc.vemser.ecommerce.entity.ClienteEntity;
 import br.com.dbc.vemser.ecommerce.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.ecommerce.repository.ClienteRepository;
-import br.com.dbc.vemser.ecommerce.utils.NotificacaoByEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ClienteService {
-
+    private final ObjectMapper objectMapper;
     private final ClienteRepository clienteRepository;
 
-    private final NotificacaoByEmail notificacaoByEmail;
 
-    private final ObjectMapper objectMapper;
-
-    public List<ClienteDTO> list() throws BancoDeDadosException {
-        List<Cliente> clientes = clienteRepository.list();
-        List<ClienteDTO> clienteDTOS = new ArrayList<>();
-
-        for (Cliente cliente : clientes) {
-            clienteDTOS.add(converterByClienteDTO(cliente));
-        }
-
-        return clienteDTOS;
+    public ClienteDTO save(ClienteCreateDTO clienteCreateDTO) {
+        return convertToDto(clienteRepository.save(convertToEntity(clienteCreateDTO)));
     }
 
-    public ClienteDTO getClienteById(Integer idCliente) throws Exception {
-
-        Cliente cliente = clienteRepository.getClienteById(idCliente);
-
-        if (cliente == null) throw new RegraDeNegocioException("Cliente não cadastrado!");
-
-        return converterByClienteDTO(cliente);
+    public List<ClienteDTO> findAll(Integer idCliente) {
+        return clienteRepository.buscarTodosOptionalId(idCliente)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public ClienteDTO create(ClienteCreateDTO clienteCreateDTO) throws Exception {
-        Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.create(entity);
-        ClienteDTO clienteDTO = converterByClienteDTO(cliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "criado");
-
+    public ClienteDTO getByid(Integer idCliente) throws RegraDeNegocioException {
+        ClienteDTO clienteDTO = convertToDto(findById(idCliente));
         return clienteDTO;
     }
 
-    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws Exception {
-
-        getClienteById(idCliente);
-
-        Cliente entity = converterByCliente(clienteCreateDTO);
-        Cliente cliente = clienteRepository.update(idCliente, entity);
-        ClienteDTO clienteDTO = converterByClienteDTO(cliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "atualizado");
-
-        return clienteDTO;
+    public ClienteDTO update(Integer idCliente, ClienteCreateDTO clienteCreateDTO) throws RegraDeNegocioException {
+        ClienteEntity findedClient = findById(idCliente);
+        findedClient.setCpf(clienteCreateDTO.getCpf());
+        findedClient.setNome(clienteCreateDTO.getNome());
+        findedClient.setTelefone(clienteCreateDTO.getTelefone());
+        findedClient.setEmail(clienteCreateDTO.getEmail());
+        ClienteDTO updatedClient = convertToDto(clienteRepository.save(findedClient));
+        return updatedClient;
     }
 
-    public void delete(Integer idCliente) throws Exception {
-        ClienteDTO clienteDTO = getClienteById(idCliente);
-        notificacaoByEmail.notificarByEmailCliente(clienteDTO, "deletado");
+    public void delete(Integer idCliente) {
+        ClienteEntity clienteEntity = clienteRepository.getById(idCliente);
+        clienteRepository.delete(clienteEntity);
 
-        clienteRepository.delete(idCliente);
     }
 
-    public ClienteDTO converterByClienteDTO(Cliente cliente) {
-        ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setIdCliente(cliente.getIdCliente());
-        clienteDTO.setNome(cliente.getNome());
-        clienteDTO.setTelefone(cliente.getTelefone());
-        clienteDTO.setEmail(cliente.getEmail());
-        clienteDTO.setCpf(cliente.getCpf());
 
-        return clienteDTO;
+    //metodos auxiliares
+    public ClienteEntity findById(Integer idcliente) throws RegraDeNegocioException {
+        return clienteRepository.findById(idcliente).orElseThrow(() -> new RegraDeNegocioException("Cliente não encontrado"));
     }
 
-    public Cliente converterByCliente(ClienteCreateDTO clienteCreateDTO) {
-        Cliente entity = objectMapper.convertValue(clienteCreateDTO, Cliente.class);
-        entity.setNome(clienteCreateDTO.getNome());
-        entity.setTelefone(clienteCreateDTO.getTelefone());
-        entity.setEmail(clienteCreateDTO.getEmail());
-        entity.setCpf(clienteCreateDTO.getCpf());
+    public ClienteDTO convertToDto(ClienteEntity clienteEntity) {
+        return objectMapper.convertValue(clienteEntity, ClienteDTO.class);
+    }
 
-        return entity;
+    public ClienteEntity convertToEntity(ClienteCreateDTO clienteCreateDTO) {
+        return objectMapper.convertValue(clienteCreateDTO, ClienteEntity.class);
     }
 }

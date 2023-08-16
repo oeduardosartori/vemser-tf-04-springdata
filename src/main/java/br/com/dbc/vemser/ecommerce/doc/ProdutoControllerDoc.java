@@ -3,9 +3,11 @@ package br.com.dbc.vemser.ecommerce.doc;
 
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
+import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoEntityDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +27,9 @@ public interface ProdutoControllerDoc {
             }
     )
     @GetMapping
-    ResponseEntity<List<ProdutoDTO>> listarProdutos() throws Exception;
+    public ResponseEntity<List<ProdutoDTO>> listarProdutos(
+            @RequestParam(required = false) Integer idProduto) throws Exception;
+
 
     @Operation(summary = "Listar produto por ID", description = "Lista produto por ID no banco")
     @ApiResponses(
@@ -79,4 +83,19 @@ public interface ProdutoControllerDoc {
     )
     @DeleteMapping("/{idProduto}")
     ResponseEntity<Void> delete(@PathVariable Integer idProduto) throws Exception;
+
+
+    @Operation(summary = "Listar todos produtos paginado", description = "Lista todos produtos do banco")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Retorna lista de todos produtos"),
+                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+                    @ApiResponse(responseCode = "404", description = "Página não encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+            }
+    )
+    @GetMapping("paginacao")
+    public Page<ProdutoEntityDTO> listarProdutosPaginados(
+            Integer pagina,
+            Integer quantidadeRegistros) throws Exception;
 }

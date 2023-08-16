@@ -3,8 +3,14 @@ package br.com.dbc.vemser.ecommerce.controller;
 import br.com.dbc.vemser.ecommerce.doc.ProdutoControllerDoc;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoCreateDTO;
 import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoDTO;
+import br.com.dbc.vemser.ecommerce.dto.produto.ProdutoEntityDTO;
 import br.com.dbc.vemser.ecommerce.service.ProdutoService;
-import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,17 +20,33 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@Data
 @Validated
-@AllArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/produto")
 public class ProdutoController implements ProdutoControllerDoc {
 
     private final ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<List<ProdutoDTO>> listarProdutos() throws Exception {
-        return new ResponseEntity<>(produtoService.listar(), HttpStatus.OK);
+    public ResponseEntity<List<ProdutoDTO>> listarProdutos(
+            @RequestParam(required = false) Integer idProduto) throws Exception {
+
+
+        return new ResponseEntity<>(produtoService.listar(idProduto), HttpStatus.OK);
+    }
+
+    @GetMapping("paginacao")
+    public Page<ProdutoEntityDTO> listarProdutosPaginados(
+            Integer pagina,
+            Integer quantidadeRegistros) throws Exception {
+
+        Sort ordenacao = Sort.by("valor");
+
+        Pageable pageable = PageRequest.of(pagina, quantidadeRegistros, ordenacao);
+
+        return produtoService.listarPaginado(pageable);
     }
 
 

@@ -27,6 +27,7 @@ public class EnderecoCreateDTO {
     @Schema(description = "Número do endereço", required = true, example = "123")
     private Integer numero;
 
+    @Schema(description = "Complemento do endereço", required = true, example = "Casa de esquina")
     private String complemento;
 
     @NotNull(message = "O CEP não pode ser vazio ou nulo")
